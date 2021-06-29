@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace BirdTrackerProject
+{
+    public partial class Bird
+    {
+        public int Id { get; set; }
+        public string Species { get; set; }
+        public string Adress { get; set; }
+        public int? Plz { get; set; }
+        public DateTime? NestDate { get; set; }
+        public int? Temperature { get; set; }
+        public int? NumberChicks { get; set; }
+        public string BoxKind { get; set; }
+        public string Compass { get; set; }
+    }
+}
