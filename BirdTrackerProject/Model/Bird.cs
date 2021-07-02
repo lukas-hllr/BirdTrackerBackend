@@ -16,5 +16,7 @@ namespace BirdTrackerProject
         public int? NumberChicks { get; set; }
         public string BoxKind { get; set; }
         public string Compass { get; set; }
+        public decimal? Longitude { get; set; }
+        public decimal? Latitude { get; set; }
     }
 }

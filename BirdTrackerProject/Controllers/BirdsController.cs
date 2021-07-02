@@ -9,7 +9,7 @@ using BirdTrackerProject;
 
 namespace BirdTrackerProject.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BirdsController : ControllerBase
     {
