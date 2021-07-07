@@ -28,6 +28,12 @@ namespace BirdTrackerProject.Controllers
         {
             return await _context.Birds.ToListAsync();
         }
+        //GET: Birds/Amsel
+        [HttpGet("{species}")]
+        public async Task<ActionResult<IEnumerable<Bird>>> GetBirdsBySpecies(string species)
+        {
+            return await _context.Birds.Where(b=>b.Species==species).ToListAsync();
+        }
 
         // GET: Birds/5
         [HttpGet("{id:int}")]
