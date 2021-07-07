@@ -11,7 +11,7 @@ namespace BirdTrackerProject
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;           
         }
 
         public IConfiguration Configuration { get; }
@@ -20,9 +20,10 @@ namespace BirdTrackerProject
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<BirdTrackerMSSQLContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("BirdTrackerMSSQL")));
-            services.AddControllers();
-            services.AddControllers().AddXmlDataContractSerializerFormatters();
+            services.AddDbContext<BirdTrackerMSSQLContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("BirdTrackerMSSQL")));            
+            services.AddControllers()
+                .AddXmlDataContractSerializerFormatters()
+                .AddXmlSerializerFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,8 +32,7 @@ namespace BirdTrackerProject
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();         
-            }
-
+            }           
             app.UseHttpsRedirection();
 
             app.UseRouting();

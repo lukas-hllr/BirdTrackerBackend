@@ -65,7 +65,7 @@ namespace BirdTrackerProject.Controllers
                 birds = _context.Birds.Where(b => b.Latitude < yMax && b.Latitude > yMin && b.Longitude < xMax && b.Longitude > xMin && b.Species == coordsList[4]).ToList();
             }
             else { return BadRequest(); }
-            foreach(var element in birds)
+            foreach (var element in birds)
             {
                 response.Add(new CoordsResponseDTO() { Latitude = element.Latitude, Longitude = element.Longitude });
             }
@@ -108,6 +108,11 @@ namespace BirdTrackerProject.Controllers
         [HttpPost]
         public async Task<ActionResult<Bird>> PostBird(Bird bird)
         {
+            int maxId = _context.Birds.Max(b => b.Id);
+            bird.Id = maxId + 1;
+            //bird.Latitude = Decimal.Parse(bird.Latitude + "");
+            //bird.Longitude = Decimal.Parse(bird.Longitude + "");
+
             _context.Birds.Add(bird);
             try
             {
