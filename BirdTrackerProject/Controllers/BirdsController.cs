@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BirdTrackerProject;
 using BirdTrackerProject.DTO;
 using System.Globalization;
+using BirdTrackerProject.Script;
 
 namespace BirdTrackerProject.Controllers
 {
@@ -18,8 +19,8 @@ namespace BirdTrackerProject.Controllers
         private readonly BirdTrackerMSSQLContext _context;
 
         public BirdsController(BirdTrackerMSSQLContext context)
-        {
-            _context = context;
+        {            
+            _context = context;            
         }
 
         // GET: Birds
@@ -38,7 +39,7 @@ namespace BirdTrackerProject.Controllers
         // GET: Birds/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Bird>> GetBird(int id)
-        {
+        {            
             var bird = await _context.Birds.FindAsync(id);
 
             if (bird == null)
@@ -113,11 +114,8 @@ namespace BirdTrackerProject.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Bird>> PostBird(Bird bird)
-        {
-            int maxId = _context.Birds.Max(b => b.Id);
-            bird.Id = maxId + 1;
-            //bird.Latitude = Decimal.Parse(bird.Latitude + "");
-            //bird.Longitude = Decimal.Parse(bird.Longitude + "");
+        {            
+            bird.Id = GenerateNewId();          
 
             _context.Birds.Add(bird);
             try
@@ -158,6 +156,24 @@ namespace BirdTrackerProject.Controllers
         private bool BirdExists(int id)
         {
             return _context.Birds.Any(e => e.Id == id);
+        }
+
+        private int GenerateNewId()
+        {
+            return _context.Birds.Max(b => b.Id) + 1;
+        }
+
+        private void FillDB(int numberOfBird)
+        {            
+            int startId = GenerateNewId();            
+
+            for(int i = 0; i < numberOfBird; i++)
+            {
+                Bird bird = GenerateBirds.randomBird(startId);
+                _context.Birds.Add(bird);
+                startId++;
+            }
+            _context.SaveChanges();
         }
     }
 }
