@@ -19,27 +19,33 @@ namespace BirdTrackerProject.Controllers
         private readonly BirdTrackerMSSQLContext _context;
 
         public BirdsController(BirdTrackerMSSQLContext context)
-        {            
-            _context = context;            
+        {
+            _context = context;
         }
 
         // GET: Birds
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Bird>>> GetBirds()
         {
-            return await _context.Birds.ToListAsync();
+            var result = await _context.Birds.ToListAsync();
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Longitude, (decimal)b2.Longitude));
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));
+            return result;
         }
         //GET: Birds/Amsel
         [HttpGet("{species}")]
         public async Task<ActionResult<IEnumerable<Bird>>> GetBirdsBySpecies(string species)
         {
-            return await _context.Birds.Where(b=>b.Species==species).ToListAsync();
+            var result = await _context.Birds.Where(b => b.Species == species).ToListAsync();
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Longitude, (decimal)b2.Longitude));
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));
+            return result;
         }
 
         // GET: Birds/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Bird>> GetBird(int id)
-        {            
+        {
             var bird = await _context.Birds.FindAsync(id);
 
             if (bird == null)
@@ -114,8 +120,8 @@ namespace BirdTrackerProject.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Bird>> PostBird(Bird bird)
-        {            
-            bird.Id = GenerateNewId();          
+        {
+            bird.Id = GenerateNewId();
 
             _context.Birds.Add(bird);
             try
@@ -164,10 +170,10 @@ namespace BirdTrackerProject.Controllers
         }
 
         private void FillDB(int numberOfBird)
-        {            
-            int startId = GenerateNewId();            
+        {
+            int startId = GenerateNewId();
 
-            for(int i = 0; i < numberOfBird; i++)
+            for (int i = 0; i < numberOfBird; i++)
             {
                 Bird bird = GenerateBirds.randomBird(startId);
                 _context.Birds.Add(bird);
