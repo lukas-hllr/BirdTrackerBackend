@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Xml;
 
 namespace BirdTrackerProject
 {
@@ -11,18 +13,22 @@ namespace BirdTrackerProject
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;           
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {            
-            services.AddDbContext<BirdTrackerMSSQLContext>(options=>options.UseSqlServer(Configuration.GetConnectionString("BirdTrackerMSSQL")));            
-            services.AddControllers()
-                .AddXmlDataContractSerializerFormatters()
-                .AddXmlSerializerFormatters();
+        {
+            services.AddDbContext<BirdTrackerMSSQLContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BirdTrackerMSSQL")));
+            services.AddControllers(options =>            
+            options.OutputFormatters.Add(new XmlSerializerOutputFormatter(new XmlWriterSettings
+            {
+                OmitXmlDeclaration = false
+            })))
+                    .AddXmlDataContractSerializerFormatters()
+                    .AddXmlSerializerFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,8 +36,8 @@ namespace BirdTrackerProject
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();         
-            }           
+                app.UseDeveloperExceptionPage();
+            }
             app.UseHttpsRedirection();
 
             app.UseRouting();
