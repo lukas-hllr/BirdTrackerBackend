@@ -18,5 +18,8 @@ namespace BirdTrackerProject
         public string Compass { get; set; }
         public decimal? Longitude { get; set; }
         public decimal? Latitude { get; set; }
+        public string Message { get; set; }
+        public string City { get; set; }
+        public short? Housenumber { get; set; }
     }
 }
