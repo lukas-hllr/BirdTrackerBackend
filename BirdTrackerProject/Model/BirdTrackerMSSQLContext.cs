@@ -46,6 +46,10 @@ namespace BirdTrackerProject
                     .HasMaxLength(500)
                     .IsUnicode(false);
 
+                entity.Property(e => e.City)
+                    .HasMaxLength(85)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Compass)
                     .HasMaxLength(500)
                     .IsUnicode(false);
@@ -53,6 +57,10 @@ namespace BirdTrackerProject
                 entity.Property(e => e.Latitude).HasColumnType("decimal(14, 12)");
 
                 entity.Property(e => e.Longitude).HasColumnType("decimal(14, 12)");
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.NestDate).HasColumnType("date");
 
