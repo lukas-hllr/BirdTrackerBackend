@@ -26,10 +26,10 @@ namespace BirdTrackerProject.Controllers
         // GET: Birds
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Bird>>> GetBirds()
-        {
-            var result = await _context.Birds.ToListAsync();
+        {            
+            var result = await _context.Birds.ToListAsync();            
             result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Longitude, (decimal)b2.Longitude));
-            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));            
             return result;
         }
         //GET: Birds/Amsel
@@ -45,7 +45,7 @@ namespace BirdTrackerProject.Controllers
         // GET: Birds/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Bird>> GetBird(int id)
-        {
+        {            
             var bird = await _context.Birds.FindAsync(id);
 
             if (bird == null)
@@ -123,6 +123,7 @@ namespace BirdTrackerProject.Controllers
         {
             bird.Id = GenerateNewId();
 
+            if (bird.Latitude == null || bird.Longitude == null) return BadRequest();
             _context.Birds.Add(bird);
             try
             {
@@ -180,6 +181,6 @@ namespace BirdTrackerProject.Controllers
                 startId++;
             }
             _context.SaveChanges();
-        }
+        }        
     }
 }
