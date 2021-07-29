@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BirdTrackerProject;
-using BirdTrackerProject.DTO;
-using System.Globalization;
 using BirdTrackerProject.Script;
 
 namespace BirdTrackerProject.Controllers
@@ -18,21 +14,24 @@ namespace BirdTrackerProject.Controllers
     {
         private readonly BirdTrackerMSSQLContext _context;
 
+        //The context is managed by the WEBAPI and used here via Dependency Injection.
         public BirdsController(BirdTrackerMSSQLContext context)
         {
             _context = context;
         }
 
-        // GET: Birds
+        //GET: Birds
+        //Birds are returned sorted by longitutde and latitude. A stable sorting algorithm is used so the sorts can be queued like done here.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Bird>>> GetBirds()
-        {            
-            var result = await _context.Birds.ToListAsync();            
+        {
+            var result = await _context.Birds.ToListAsync();
             result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Longitude, (decimal)b2.Longitude));
-            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));            
+            result.Sort((b1, b2) => Decimal.Compare((decimal)b1.Latitude, (decimal)b2.Latitude));
             return result;
         }
         //GET: Birds/Amsel
+        //The specific bird type is returned sorted by longitutde and latitude. A stable sorting algorithm is used so the sorts can be queued like done here.
         [HttpGet("{species}")]
         public async Task<ActionResult<IEnumerable<Bird>>> GetBirdsBySpecies(string species)
         {
@@ -43,9 +42,10 @@ namespace BirdTrackerProject.Controllers
         }
 
         // GET: Birds/5
+        //The bird assosiated with the specified ID is returned, if found.
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Bird>> GetBird(int id)
-        {            
+        {
             var bird = await _context.Birds.FindAsync(id);
 
             if (bird == null)
@@ -55,38 +55,9 @@ namespace BirdTrackerProject.Controllers
 
             return bird;
         }
-        // GET: Birds/Coordinates/xMin+yMax+xMax+yMin(+Birdspecies)
-        // returns coordinates of all birds in the given rectangle, if a bird species is specified it only returns coordinates of that species.
-        // Coordinates have to be in decimal format and seperated by a "+"
-        [HttpGet("Coordinates/{coords}")]
-        public ActionResult<List<CoordsResponseDTO>> GetHeatMapCoords(string coords)
-        {
-            List<CoordsResponseDTO> response = new List<CoordsResponseDTO>();
-            string[] coordsList = coords.Split("+");
-            decimal xMin = decimal.Parse(coordsList[0], CultureInfo.InvariantCulture);
-            decimal yMax = decimal.Parse(coordsList[1], CultureInfo.InvariantCulture);
-            decimal xMax = decimal.Parse(coordsList[2], CultureInfo.InvariantCulture);
-            decimal yMin = decimal.Parse(coordsList[3], CultureInfo.InvariantCulture);
-            List<Bird> birds = new List<Bird>();
-            if (coordsList.Length == 4)
-            {
-                birds = _context.Birds.Where(b => b.Latitude < yMax && b.Latitude > yMin && b.Longitude < xMax && b.Longitude > xMin).ToList();
-            }
-            else
-            if (coordsList.Length == 5)
-            {
-                birds = _context.Birds.Where(b => b.Latitude < yMax && b.Latitude > yMin && b.Longitude < xMax && b.Longitude > xMin && b.Species == coordsList[4]).ToList();
-            }
-            else { return BadRequest(); }
-            foreach (var element in birds)
-            {
-                response.Add(new CoordsResponseDTO() { Latitude = element.Latitude, Longitude = element.Longitude });
-            }
-            return response;
-        }
 
         // PUT: Birds/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // Entries in the DB can be updated, ensures the given bird matches the given Id.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBird(int id, Bird bird)
         {
@@ -117,7 +88,7 @@ namespace BirdTrackerProject.Controllers
         }
 
         // POST: Birds
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // Makes a new entry and saves it to the DB. A Bird must have an ID, longitutde and latitude, otherwise a Bad Request is returned.
         [HttpPost]
         public async Task<ActionResult<Bird>> PostBird(Bird bird)
         {
@@ -145,6 +116,7 @@ namespace BirdTrackerProject.Controllers
         }
 
         // DELETE: Birds/5
+        // The bird assosiated with the given Id is deleted from the DB.
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBird(int id)
         {
@@ -164,12 +136,12 @@ namespace BirdTrackerProject.Controllers
         {
             return _context.Birds.Any(e => e.Id == id);
         }
-
+        //returns the highest free Id in the DB.
         private int GenerateNewId()
         {
             return _context.Birds.Max(b => b.Id) + 1;
         }
-
+        //Script used to populate the DB with random Birdobjects.
         private void FillDB(int numberOfBird)
         {
             int startId = GenerateNewId();
@@ -181,6 +153,6 @@ namespace BirdTrackerProject.Controllers
                 startId++;
             }
             _context.SaveChanges();
-        }        
+        }
     }
 }
