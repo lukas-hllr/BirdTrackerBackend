@@ -10,8 +10,7 @@ using System.Xml;
 namespace BirdTrackerProject
 {
     public class Startup
-    {
-        //readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+    {        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,16 +27,8 @@ namespace BirdTrackerProject
             {
                 OmitXmlDeclaration = false
             })))
-                    .AddXmlDataContractSerializerFormatters()
-                    .AddXmlSerializerFormatters();
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy(MyAllowSpecificOrigins,
-            //                      builder =>
-            //                      {
-            //                          builder.WithOrigins("http://localhost:5500").AllowAnyHeader().AllowAnyMethod();
-            //                      });
-            //});
+                    .AddXmlDataContractSerializerFormatters()//Adds the necesarry Serializer to return XML objects instead of the default Json objects.
+                    .AddXmlSerializerFormatters();            
             services.AddCors();
         }
 
@@ -51,8 +42,7 @@ namespace BirdTrackerProject
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            //app.UseCors(MyAllowSpecificOrigins);
+            
             app.UseCors(options => options
                 .AllowAnyMethod()
                 .AllowAnyHeader()

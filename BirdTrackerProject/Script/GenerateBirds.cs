@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace BirdTrackerProject.Script
 {
+    //Script to generate a random Bird.
     public class GenerateBirds
     {
         private static Random rnd = new Random();
