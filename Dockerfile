@@ -19,8 +19,9 @@ WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "BirdTrackerProject.dll"]
 
+ENV DATABASE ""
 #BUILD:
 #docker build -t birdtrackerbackend .
 
 #RUN:
-#docker run -it --rm -p 5000:80 --name birdtrackerbackend_sample birdtrackerbackend
+#docker run -it --rm -p 5000:80 --name birdtrackerbackend_sample -e "STRING" birdtrackerbackend
