@@ -23,7 +23,7 @@ namespace BirdTrackerProject
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("BT-DATABASE"));
+                optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("BT_DATABASE"));
             }
         }
 
